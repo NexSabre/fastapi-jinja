@@ -45,8 +45,10 @@ fastapi_jinja.global_init(template_folder, auto_reload=dev_mode)
 Then just decorate the FastAPI view methods (works on sync and async methods):
 
 ```python
-@router.post('/')
-@fastapi_jinja.template('home/index.j2')
+from fastapi_jinja import template
+
+@router.post("/")
+@template('home/index.j2')
 async def home_post(request: Request):
     form = await request.form()
     vm = PersonViewModel(**form) 
