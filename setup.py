@@ -23,7 +23,7 @@ with open(requirements_txt, "r", encoding="utf-8") as fin:
 
 setup(
     name="fastapi-jinja",
-    version="0.1.1",
+    version="0.2.0",
     url="https://github.com/NexSabre/fastapi-jinja",
     license="MIT",
     author="Nex Sabre",
