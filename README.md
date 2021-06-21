@@ -56,13 +56,33 @@ from fastapi_jinja import template
 @template('home/index.j2')
 async def home_post(request: Request):
     form = await request.form()
-    vm = PersonViewModel(**form) 
+    vm = PersonViewModel(**form)
 
     return vm.dict() # {'first':'John', 'last':'Doe', ...}
 
 ```
 
-The view method should return a `dict` to be passed as variables/values to the template. 
+The view method should return a `dict` to be passed as variables/values to the template.
+We can also return model objects that can be converted into a dictionary, common when using libraries
+such as pydantic to represent models in various forms.
+
+```python
+from fastapi_jinja import template
+from pydantic import BaseModel
+
+class Person(BaseModel):
+    id: int
+    name: str
+
+@router.post("/")
+@template('home/index.j2')
+async def home_post(request: Request):
+    form = await request.form() # form: {'id': 1, 'name': 'Jane'}
+    person = Person(**form)
+
+    return person # Person(id=1, name='Jane')
+
+```
 
 If a `fastapi.Response` is returned, the template is skipped and the response along with status_code and
 other values is directly passed through. This is common for redirects and error responses not meant

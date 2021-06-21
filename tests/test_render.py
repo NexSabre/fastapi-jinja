@@ -14,6 +14,19 @@ folder = os.path.join(here, "templates")
 
 fake_request = Request(scope={'type': 'http'})
 
+class DictModel:
+    """This represents a model that can be converted into a dict, such as pydantic."""
+
+    def __init__(self, name: str, age: int):
+        self.name = name
+        self.age = age
+
+    def to_dict(self):
+        return {
+            'name': self.name,
+            'age': self.age,
+        }
+
 
 def test_cannot_decorate_missing_template():
     with pytest.raises(TemplateNotFound):
@@ -23,6 +36,17 @@ def test_cannot_decorate_missing_template():
             return {}
 
         view_method(fake_request)
+
+
+def test_can_decorate_with_dictable_response():
+    @fj.template("home/index.j2")
+    def view_method(request: Request, name, age):
+        model = DictModel(name, age)
+        return model.to_dict()
+
+    resp = view_method(fake_request, "foo", 42)
+    assert isinstance(resp, fastapi.Response)
+    assert resp.status_code == 200
 
 
 def test_can_decorate_dict_sync_method():

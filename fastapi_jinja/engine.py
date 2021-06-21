@@ -102,6 +102,18 @@ def __render_response(template_file: str, response_val: dict, request: Request, 
     if isinstance(response_val, fastapi.Response):
         return response_val
 
+    # If it is not a dict, but has common methods to be cast into one, such as pydantic
+    # then let's cast it into one
+    if not isinstance(response_val, dict):
+        try:
+            response_val = response_val.to_dict()
+        except AttributeError:
+            try:
+                response_val = response_val.dict()
+            except AttributeError:
+                # if we can't convert, then it will be caught below
+                pass
+
     model = dict(response_val)
     # Allow override from response
     model.setdefault('media_type', mimetype)
@@ -112,7 +124,10 @@ def __render_response(template_file: str, response_val: dict, request: Request, 
     model.setdefault('request', request)
 
     if template_file and not isinstance(response_val, dict):
-        msg = f"Invalid return type {type(response_val)}, we expected a dict as the return value."
+        msg = (
+            f"Invalid return type {type(response_val)}, "
+            "we expected a dict (or a dictable object) as the return value."
+        )
         raise FastAPIJinjaException(msg)
 
     return render(template_file, **model)
