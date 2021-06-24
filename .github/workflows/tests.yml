@@ -9,6 +9,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: Install dependencies
+      run: |
+        pip install black -t py38
+    - name: Verify code
+      run: |
+        black --check -t py38 .
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
