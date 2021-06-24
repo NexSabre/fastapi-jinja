@@ -1,4 +1,4 @@
 -r requirements.txt
 
-pytest
-pytest-clarity
+pytest~=6.2.4
+pytest-clarity~=1.0.1
