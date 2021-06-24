@@ -14,7 +14,9 @@ template_path: Optional[str] = None
 __templates: Optional[Jinja2Templates] = None
 
 
-def global_init(template_folder: str, auto_reload: bool = False, cache_init: bool = True):
+def global_init(
+    template_folder: str, auto_reload: bool = False, cache_init: bool = True
+):
     global __templates, template_path
 
     if __templates and cache_init:
@@ -47,7 +49,12 @@ def render(template_file: str, **template_data):
     return rendered_page
 
 
-def response(template_file: str, mimetype: str = "text/html", status_code: int = 200, **template_data):
+def response(
+    template_file: str,
+    mimetype: str = "text/html",
+    status_code: int = 200,
+    **template_data,
+):
     html = render(template_file, **template_data)
     return fastapi.Response(content=html, media_type=mimetype, status_code=status_code)
 
@@ -66,8 +73,10 @@ def template(template_file: str, mimetype: str = "text/html"):
     def response_inner(f):
         name = get_name(f)
         signature = inspect.signature(f)
-        if 'request' not in signature.parameters:
-            raise FastAPIJinjaException(f"Template view {name} did not define a request argument")
+        if "request" not in signature.parameters:
+            raise FastAPIJinjaException(
+                f"Template view {name} did not define a request argument"
+            )
 
         @wraps(f)
         def sync_view_method(*args, **kwargs):
@@ -94,10 +103,12 @@ def __get_request(*args, **kwargs):
         if isinstance(arg, Request):
             return arg
     else:
-        return kwargs.get('request', None)
+        return kwargs.get("request", None)
 
 
-def __render_response(template_file: str, response_val: dict, request: Request, mimetype: str):
+def __render_response(
+    template_file: str, response_val: dict, request: Request, mimetype: str
+):
 
     if isinstance(response_val, fastapi.Response):
         return response_val
@@ -116,12 +127,12 @@ def __render_response(template_file: str, response_val: dict, request: Request, 
 
     model = dict(response_val)
     # Allow override from response
-    model.setdefault('media_type', mimetype)
+    model.setdefault("media_type", mimetype)
 
-    if 'request' in model and not isinstance(model['request'], Request):
+    if "request" in model and not isinstance(model["request"], Request):
         msg = f"'request' in response is not an instance of {Request.__name__}"
         raise FastAPIJinjaException(msg)
-    model.setdefault('request', request)
+    model.setdefault("request", request)
 
     if template_file and not isinstance(response_val, dict):
         msg = (

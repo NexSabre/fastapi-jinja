@@ -2,6 +2,7 @@ import asyncio
 import os
 
 import fastapi
+
 # noinspection PyPackageRequirements
 import pytest
 from jinja2.exceptions import TemplateNotFound
@@ -12,7 +13,8 @@ import fastapi_jinja as fj
 here = os.path.dirname(__file__)
 folder = os.path.join(here, "templates")
 
-fake_request = Request(scope={'type': 'http'})
+fake_request = Request(scope={"type": "http"})
+
 
 class DictModel:
     """This represents a model that can be converted into a dict, such as pydantic."""
@@ -23,8 +25,8 @@ class DictModel:
 
     def to_dict(self):
         return {
-            'name': self.name,
-            'age': self.age,
+            "name": self.name,
+            "age": self.age,
         }
 
 
