@@ -15,7 +15,7 @@ __templates: Optional[Jinja2Templates] = None
 
 
 def global_init(
-    template_folder: str, auto_reload: bool = False, cache_init: bool = True
+    template_folder: str, auto_reload: bool = False, cache_init: bool = True, **env_options
 ):
     global __templates, template_path
 
@@ -31,9 +31,9 @@ def global_init(
         raise FastAPIJinjaException(msg)
 
     template_path = template_folder
-    __templates = Jinja2Templates(directory=template_folder)
+    __templates = Jinja2Templates(directory=template_folder, **env_options)
     __templates.env.auto_reload = auto_reload
-
+    return __templates.env
 
 def clear():
     global __templates, template_path
